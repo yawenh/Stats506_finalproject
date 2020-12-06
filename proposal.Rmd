@@ -1,0 +1,29 @@
+---
+title: "Stats 506, F20, Final Project Proposal"
+author: "Yawen Hu, yawenhu@umich.edu"
+date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
+output: html_document
+---
+#### I. Research Question:  
+How have the types of heating and cooling equipment used in commercial buildings changed over time within different climate regions in the United States?  
+   
+#### II. Data:  
+2012 US Commercial Building Energy Consumption Survey ([CBECS](https://www.eia.gov/consumption/commercial/data/2012/index.php?view=microdata))   
+   
+#### III. Variables:  
+  * `PUBID`: Building identifier.  
+  * `PUBCLIM`: Building America climate region.  
+  * `MAINCL`: Main cooling equipment.  
+  * `MAINHT`: Main heating equipment.  
+  * `YRCONC`: Year of construction category.  
+  * `FINALWT`: Final full sample building weight.  
+  * `FINALWT1` - `FINALWT197`: Final replicate weights 1- 197.  
+    
+#### IV. Analysis Plan:  
+  * Estimate the proportion of commercial buildings with different main heating equipment in different construction year, by climate regions.   
+  * Similarly, estimate the proportion of commercial buildings with different main cooling equipment in different construction year, by climate regions.  
+  * Calculate the confidence invertals for the point estimates obtained in the last two steps.  
+  * Make tables and graphs for each of the different climate regions.  
+  * Conclustion and discussion.  
+  
+#### V. Software: R  
