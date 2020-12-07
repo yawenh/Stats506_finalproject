@@ -24,9 +24,7 @@ During the analysis, the construction time of the buildings are divided into two
 The data I used is `2012 US Commercial Building Energy Consumption Survey` ([CBECS](https://www.eia.gov/consumption/commercial/data/2012/index.php?view=microdata)) data set.   
     
 #### Methods:   
-This project is written using R. `tidyverse` package is used to perform data 
-manipulation part, and `ggplot2` package is used to perform the data visualization 
-part.    
+This project is written using R. `tidyverse` package is used to perform data manipulation part, and `ggplot2` package is used to perform the data visualization part. Here is the [link](https://github.com/yawenh/Stats506_finalproject) for the GitHub repository containing computational code.    
 
 - step 1 - Data Cleaning: Read in the who CBECS data and select interested variables:    
 
