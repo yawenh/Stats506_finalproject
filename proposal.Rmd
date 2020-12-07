@@ -5,7 +5,7 @@ date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
 output: html_document
 ---
 #### I. Research Question:  
-How have the types of heating and cooling equipment used in commercial buildings construced before 1980 and after 1980 changed within different climate regions in the United States?
+How have the types of heating and cooling equipment usage changed between commercial buildings constructed before 1980 and after 1980 within different climate regions in the United States?
    
 #### II. Data:  
 2012 US Commercial Building Energy Consumption Survey ([CBECS](https://www.eia.gov/consumption/commercial/data/2012/index.php?view=microdata))   

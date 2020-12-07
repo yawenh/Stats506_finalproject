@@ -1,0 +1,135 @@
+---
+title: "Stats 506, F20, Final Project Writeup"
+author: "Yawen Hu, yawenhu@umich.edu"
+date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
+output: 
+  html_document:
+    code_folding: hide
+    theme: journal
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### I. Introduction:    
+* ***Research Question: How have the types of heating and cooling equipment usage changed between commercial buildings constructed before 1980 and after 1980 within different climate regions in the United States?***
+   
+With different construction time, the interior facilities of the commercial buildings could vary a lot, especially the heating and cooling equipment. By comparing the proportion of equipment usage of the buildings with different construction time, we can find the general changing trend of the popularity of temperature-adjusted equipment usage. This trend could be interesting in many areas, including energy-saving, air conditioners or heater selling, etc.   
+   
+During the analysis, the construction time of the buildings are divided into two groups (before and after 1980). I did point estimates and built confidential intervals using replicate weights on the proportion of equipment usage with different construction time. Also the bias are reduced by grouping the commercial buildings according to the climate regions they located in. Finally, I did analysis by visualizing the result table and figures.
+   
+### II. Data & Methods:   
+#### Data:  
+The data I used is `2012 US Commercial Building Energy Consumption Survey` ([CBECS](https://www.eia.gov/consumption/commercial/data/2012/index.php?view=microdata)) data set.   
+    
+#### Methods:   
+This project is written using R. `tidyverse` package is used to perform data 
+manipulation part, and `ggplot2` package is used to perform the data visualization 
+part.    
+
+- step 1 - Data Cleaning: Read in the who CBECS data and select interested variables:    
+
+  * `PUBID`: Building identifier.  
+  * `PUBCLIM`: Building America climate region. (withheld region dropped) 
+  * `MAINCL`: Main cooling equipment. (NA's dropped)   
+  * `MAINHT`: Main heating equipment. (NA's dropped)   
+  * `YRCONC`: Year of construction category. (divided into before/after 1980 groups)
+  * `FINALWT`: Final full sample building weight.  
+  * `FINALWT1` - `FINALWT197`: Final replicate weights 1- 197.   
+
+- step 2 - Point Estimation: By grouping data according to climate regions, constructed year, and equipment types, I calculated the point estimates of proportion using final full weights.  
+
+- step 3 - Confidence Interval: Joining with long format of replicate weight data set, I calculated the 95% confidence interval of the point estimations.   
+
+- step 4 - Visualization: By referring to the codebook, I decode the variables and construct table and plots using `knitr` and `ggplot2` packages.  
+   
+### III. Result {.tabset .tabset-fade .tabset-pills}   
+
+```{r source code, message=FALSE, warning=FALSE}
+path = "~/Desktop/stats506/final_project"
+source_file = sprintf("%s/final_project.R", path)
+source(source_file)
+```
+  
+#### Table    
+```{r table}
+options(knitr.kable.NA = '')
+cap_tab1 = paste(
+  "**Table 1.** *Proportion of Cooling/Heating Equipment Usage",
+  "in Four Climate Regions (Before and After 1980).*")
+tab %>%
+  knitr::kable(
+    format = "html",
+    escape = FALSE,
+    caption = cap_tab1
+  ) %>%
+  kableExtra::kable_styling("striped", 
+                            full_width = F,
+                            font_size = 10) %>%
+  kableExtra::group_rows("Cooling Equipments", start_row = 1, end_row = 8) %>%
+  kableExtra::group_rows("Heating Equipments", start_row = 9, end_row = 15)
+```
+  
+#### Figures 
+```{r cooling figure, fig.cap= cap_fig1}
+cap_fig1 = paste(
+  "**Figure 1.** *Proportion of different Cooling Equipment used",
+  "in Four Climate Regions (Before and After 1980).*"
+)
+
+cool_rw %>%
+  mutate(
+    climate = factor(climate, levels = c(1,2,3,5), labels = climate_label),
+    cool_type = factor(cool, levels = c(1:8), labels = cool_label)
+  ) %>%
+  ggplot( aes(x = cool_type, y = prop, color = year) ) +
+  geom_point( position = position_dodge(.2), size = 0.9 ) +
+  geom_errorbar(
+    aes(ymin = lwr, ymax = upr),
+    position = position_dodge(.2), width = 0.3
+  ) + 
+  facet_wrap(~ climate) + 
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) + 
+  coord_flip() + 
+  theme_bw() + 
+  xlab("Cooling equipment Type") + 
+  ylab("Proportion of Usage")
+
+```
+
+```{r heating figure, fig.cap= cap_fig2}
+cap_fig2 = paste(
+  "**Figure 2.** *Proportion of different Cooling Equipment used",
+  "in Four Climate Regions (Before and After 1980).*"
+)
+
+heat_rw %>%
+  mutate(
+    climate = factor(climate, levels = c(1,2,3,5), labels = climate_label),
+    heat_type = factor(heat, levels = c(1:7), labels = heat_label)
+  ) %>%
+  ggplot( aes(x = heat_type, y = prop, color = year) ) +
+  geom_point( position = position_dodge(.2), size = 0.9 ) +
+  geom_errorbar(
+    aes(ymin = lwr, ymax = upr),
+    position = position_dodge(.2), width = 0.3
+  ) + 
+  facet_wrap(~ climate) + 
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) + 
+  coord_flip() + 
+  theme_bw() + 
+  xlab("Heating equipment Type") + 
+  ylab("Proportion of Usage")
+```
+
+### IV. Conclusion:   
+* Cooling:   
+  - Among all climate regions, packaged air conditioning units(other than heat pumps) is a popular choice for commercial buildings, especially for marine regions. 
+Residential-type central air conditioners without using chilling water is the second popular choice.   
+  - The use of individual room AC seems decreases among all climate regions in commercial buildings built after 1980. However, the use of heat pumps for cooling generally increases, especially for marine regions.  
+    
+* Heating:  
+  - Similar to cooling equipment, packaged central heating unit is the most popular heating choice for commercial buildings in all climate regions.   
+  - The use of inside boilers in cold region and mixed-humid region. In marine region, the use of heating pumps increased a lot, while furnaces usage decreases significantly.  
+  
