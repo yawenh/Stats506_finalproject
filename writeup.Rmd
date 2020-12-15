@@ -17,11 +17,11 @@ knitr::opts_chunk$set(echo = TRUE)
    
 With different construction time, the interior facilities of the commercial buildings could vary a lot, especially the heating and cooling equipment. By comparing the proportion of equipment usage of the buildings with different construction time, we can find the general changing trend of the popularity of temperature-adjusted equipment usage. This trend could be interesting in many areas, including energy-saving, air conditioners or heater selling, etc.   
    
-During the analysis, the construction time of the buildings are divided into two groups (before and after 1980). I did point estimates and built confidential intervals using replicate weights on the proportion of equipment usage with different construction time. Also the bias are reduced by grouping the commercial buildings according to the climate regions they located in. Finally, I did analysis by visualizing the result table and figures.
+During the analysis, the construction time of the buildings are divided into two groups (before and after 1980). I mainly computed the proportion of equipment usage with different construction time with 95% CIs. Also the bias are reduced by grouping the commercial buildings according to the climate regions they located in. Finally, I did analysis by visualizing the result table and figures.
    
 ### II. Data & Methods:   
 #### Data:  
-The data I used is `2012 US Commercial Building Energy Consumption Survey` ([CBECS](https://www.eia.gov/consumption/commercial/data/2012/index.php?view=microdata)) data set.   
+Data source: `2012 US Commercial Building Energy Consumption Survey` ([CBECS](https://www.eia.gov/consumption/commercial/data/2012/index.php?view=microdata)) data set.   
     
 #### Methods:   
 This project is written using R. `tidyverse` package is used to perform data manipulation part, and `ggplot2` package is used to perform the data visualization part. Here is the [link](https://github.com/yawenh/Stats506_finalproject) for the GitHub repository containing computational code.    
@@ -40,7 +40,7 @@ This project is written using R. `tidyverse` package is used to perform data man
 
 - step 3 - Confidence Interval: Joining with long format of replicate weight data set, I calculated the 95% confidence interval of the point estimations.   
 
-- step 4 - Visualization: By referring to the codebook, I decode the variables and construct table and plots using `knitr` and `ggplot2` packages.  
+- step 4 - Visualization: By referring to the codebook, I decode the variables and construct tables and plots using `knitr` and `ggplot2` packages.  
    
 ### III. Result {.tabset .tabset-fade .tabset-pills}   
 
@@ -81,10 +81,10 @@ cool_rw %>%
     climate = factor(climate, levels = c(1,2,3,5), labels = climate_label),
     cool_type = factor(cool, levels = c(1:8), labels = cool_label)
   ) %>%
-  ggplot( aes(x = cool_type, y = prop, color = year) ) +
+  ggplot( aes(x = cool_type, y = 100*prop, color = year) ) +
   geom_point( position = position_dodge(.2), size = 0.9 ) +
   geom_errorbar(
-    aes(ymin = lwr, ymax = upr),
+    aes(ymin = 100*lwr, ymax = 100*upr),
     position = position_dodge(.2), width = 0.3
   ) + 
   facet_wrap(~ climate) + 
@@ -92,7 +92,7 @@ cool_rw %>%
   coord_flip() + 
   theme_bw() + 
   xlab("Cooling equipment Type") + 
-  ylab("Proportion of Usage")
+  ylab("Proportion of Cooling Equipment Usage")
 
 ```
 
@@ -107,27 +107,36 @@ heat_rw %>%
     climate = factor(climate, levels = c(1,2,3,5), labels = climate_label),
     heat_type = factor(heat, levels = c(1:7), labels = heat_label)
   ) %>%
-  ggplot( aes(x = heat_type, y = prop, color = year) ) +
+  ggplot( aes(x = heat_type, y = 100*prop, color = year) ) +
   geom_point( position = position_dodge(.2), size = 0.9 ) +
   geom_errorbar(
-    aes(ymin = lwr, ymax = upr),
+    aes(ymin = 100*lwr, ymax = 100*upr),
     position = position_dodge(.2), width = 0.3
   ) + 
-  facet_wrap(~ climate) + 
+  facet_wrap(~climate) + 
   scale_color_manual(values = c("#00AFBB", "#E7B800")) + 
   coord_flip() + 
   theme_bw() + 
   xlab("Heating equipment Type") + 
-  ylab("Proportion of Usage")
+  ylab("Proportion of Heating Equipment Usage")
 ```
 
-### IV. Conclusion:   
-* Cooling:   
-  - Among all climate regions, packaged air conditioning units(other than heat pumps) is a popular choice for commercial buildings, especially for marine regions. 
-Residential-type central air conditioners without using chilling water is the second popular choice.   
-  - The use of individual room AC seems decreases among all climate regions in commercial buildings built after 1980. However, the use of heat pumps for cooling generally increases, especially for marine regions.  
+### IV. Conclusion / Discussion:   
+- Conclusions:   
+  * Cooling Equipment:   
+    - Among all climate regions, packaged air conditioning units(other than heat pumps) is a popular choice for commercial buildings, especially for marine regions. 
+  Residential-type central air conditioners without using chilling water is the second popular choice.   
+    - The use of individual room AC seems decreases among all climate regions in commercial buildings built after 1980. However, the use of heat pumps for cooling generally increases, especially for marine regions.    
+  * Heating Equipment:   
+    - Similar to cooling equipment, packaged central heating unit is the most popular heating choice for commercial buildings in all climate regions.   
+    - The use of inside boilers in cold region and mixed-humid region decreases. In marine region, the use of heating pumps increased a lot, while furnaces usage decreases significantly.    
+      
+- Discussion:    
+  * Strengths:   
+    - By summarizing the proportions of usage within climate regions, the bias produced by climate influence can be reduced.   
+    - The confidence interval are relatively small, which means the estimation are relatively stable.   
     
-* Heating:  
-  - Similar to cooling equipment, packaged central heating unit is the most popular heating choice for commercial buildings in all climate regions.   
-  - The use of inside boilers in cold region and mixed-humid region. In marine region, the use of heating pumps increased a lot, while furnaces usage decreases significantly.  
+  * Limitation:    
+    - Dividing the construction time into two groups may not be representative enough. As there maybe some significant change between a small range of years, which will influence the whole group.    
   
+    

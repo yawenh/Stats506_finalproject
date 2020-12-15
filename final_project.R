@@ -69,7 +69,7 @@ cool_rw = cbecs %>%
   summarise(cool, prop_rw = count / sum(count), .groups = "drop_last") %>%
   left_join(cool, by = c("climate", "year", "cool")) %>%
   group_by(climate, year, cool) %>%
-  summarise(prop = mean(prop), v = mean({prop_rw - prop}^2) / {{1 - 0.5}^2}, .groups = "drop_last")
+  summarise(prop = mean(prop), v = sum({prop_rw - prop}^2), .groups = "drop_last")
 
 m = qnorm(0.975)
 cool_rw = cool_rw %>%
@@ -91,7 +91,7 @@ heat_rw = cbecs %>%
   summarise(heat, prop_rw = count / sum(count), .groups = "drop_last") %>%
   left_join(heat, by = c("climate", "year", "heat")) %>%
   group_by(climate, year, heat) %>%
-  summarise(prop = mean(prop), v = mean({prop_rw - prop}^2) / {{1 - 0.5}^2}, .groups = "drop_last")
+  summarise(prop = mean(prop), v = sum({prop_rw - prop}^2), .groups = "drop_last")
 
 heat_rw = heat_rw %>%
   transmute(
